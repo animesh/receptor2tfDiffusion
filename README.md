@@ -1,1 +1,1 @@
-# diffusion_model
+# diffusion based network model
