@@ -1,4 +1,4 @@
-Package: networkUC
+Package: receptor2tfDiffussion
 Type: Package
 Title: This package calculate single-sample network connectivity
 Version: 1.0
