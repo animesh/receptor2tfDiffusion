@@ -1,1 +1,3 @@
-# diffusion based network model
+# receptor2TF_diffusion: 
+
+**Diffusion based network model**
