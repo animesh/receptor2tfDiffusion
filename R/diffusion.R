@@ -89,6 +89,7 @@ signalOnNetwork <- function(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRS
 #' @param network a dataframe of two columns "from" and "to" with strings representing gene IDs
 #' @param nCores number of cores for parallel processing
 #' @param nTicks maximum number of time steps. Defaults to 2000.
+#' @param M gene expression data
 #' @keywords Diffusion Model
 #' @export
 #' @return list of two components: Enode which is end node and Signal i.e. final state of network
@@ -96,7 +97,7 @@ signalOnNetwork <- function(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRS
 #' data(diffusionData)
 #' # TFs <- diffusionData$TFs
 #' # diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000)
-#' { ... }
+#' #{ ... }
 
 diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
   if(!all(receptors %in% rownames(M))) {
@@ -154,15 +155,15 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
 #'
 #' This function generates network graph from receptor to TF by using shortest path with neighboring network nodes.
 #'
-#' @param from vector of string with ids.
-#' @param to vector of string with gene ids of Transcription Factors
 #' @param network a dataframe of two columns "from" and "to" with strings representing gene IDs
+#' @param receptors receptors in the network node
+#' @param TFs transcription factors in the network node
 #' @keywords getSubnetwork
 #' @export
 #' @return list of two components: network subgraph from receptor i.e. start node to TF i.e. end node
 #' @examples
 #' # g <- graph_from_data_frame(network, directed = F, vertices = NULL)
-#' { ... }
+#' #{ ... }
 
 
 getSubnetwork <- function(network,receptors,TFs){
