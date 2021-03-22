@@ -14,12 +14,13 @@
 #' @param inputSignal minimum amount of signal placed as input for signal propagation
 #' @param n number of iteration
 #' @keywords Network Signalling
-#' @export
 #' @return
 #' @examples
-#' data(diffusionData)
-#' signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
-#' { ... }
+#' #data(diffusionData)
+#' #signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
+#' #{ ... }
+#' @export
+
 
 signalOnNetwork <- function(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000){
 
@@ -91,13 +92,13 @@ signalOnNetwork <- function(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRS
 #' @param nTicks maximum number of time steps. Defaults to 2000.
 #' @param M gene expression data
 #' @keywords Diffusion Model
-#' @export
 #' @return list of two components: Enode which is end node and Signal i.e. final state of network
 #' @examples
 #' data(diffusionData)
 #' # TFs <- diffusionData$TFs
 #' # diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000)
 #' #{ ... }
+#' @export
 
 diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
   if(!all(receptors %in% rownames(M))) {
@@ -159,12 +160,11 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
 #' @param receptors receptors in the network node
 #' @param TFs transcription factors in the network node
 #' @keywords getSubnetwork
-#' @export
 #' @return list of two components: network subgraph from receptor i.e. start node to TF i.e. end node
 #' @examples
 #' # g <- graph_from_data_frame(network, directed = F, vertices = NULL)
 #' #{ ... }
-
+#' @export
 
 getSubnetwork <- function(network,receptors,TFs){
 
