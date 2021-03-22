@@ -5,7 +5,7 @@
 #'
 #' Signalling Network
 #'
-#' Signalling etwork quantify network connectivity by calculating signal strength between receptors and TFs.
+#' Signalling network quantify network connectivity by calculating signal strength between receptors and TFs.
 #'
 #' @param network a dataframe of two columns "from" and "to" with strings representing gene IDs
 #' @param nodeW weight on the network node
