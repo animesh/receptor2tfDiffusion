@@ -1,4 +1,4 @@
-#' receptor2tfDiffussion
+#' receptor2tfDiffusion
 #'
 #' To calculate Network diffusion, there are mainly two steps: creating Signalling Network (SigNet) and
 #' use SigNet output in calculate single-sample network connectivity using diffusion model.
