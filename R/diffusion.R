@@ -1,4 +1,4 @@
-#' Diffusion model
+#' receptor2tfDiffusion
 #'
 #' To calculate Network diffusion, there are mainly two steps: creating Signalling Network (SigNet) and
 #' use SigNet output in calculate single-sample network connectivity using diffusion model.
@@ -148,3 +148,48 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
 
   return(X)
 }
+
+
+#' Network Graph
+#'
+#' This function generates network graph from receptor to TF by using shortest path with neighboring network nodes.
+#'
+#' @param from vector of string with ids.
+#' @param to vector of string with gene ids of Transcription Factors
+#' @param network a dataframe of two columns "from" and "to" with strings representing gene IDs
+#' @keywords getSubnetwork
+#' @export
+#' @return list of two components: network subgraph from receptor i.e. start node to TF i.e. end node
+#' @examples
+#' # g <- graph_from_data_frame(network, directed = F, vertices = NULL)
+#' { ... }
+
+
+getSubnetwork <- function(network,receptors,TFs){
+
+  g <- graph_from_data_frame(network, directed = F, vertices = NULL)
+
+  receptor2TFsubgraph <- function(g,from = 'OSMR',to = 'RELA'){
+    gg <- all_shortest_paths(g, from = from, to = to)
+    vs <- unique(unlist(gg$res))
+    nb <- neighbors(g,vs)
+    sg <- subgraph(g, unique(c(vs,nb)))
+    return(sg)
+  }
+
+  nodes <- NULL
+
+  for (tf in TFs){
+    for (R in receptors){
+      gg <- receptor2TFsubgraph(g,from = tf,to = R)
+      gg <- igraph::simplify(gg,remove.multiple = F, remove.loops = T)
+      nodes <- unique(c(nodes,names(V(gg))))
+    }
+  }
+
+  newNetwork <- network[network[,1] %in% nodes & network[,2] %in% nodes,]
+  return(newNetwork)
+}
+
+
+
