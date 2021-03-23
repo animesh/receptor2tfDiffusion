@@ -89,7 +89,7 @@ decideTests(eBayes(fit2),p.value = 0.01)
 ```
 As we see there are receptor-TF pairs that are strongly related to both drug resistance and inflammation.
 
-## Session Info
+### Session Info
 sessionInfo()
 
 ## Contributing
