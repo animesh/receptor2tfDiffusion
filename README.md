@@ -11,7 +11,7 @@ Install the 'receptor2tfDiffusion' package using the 'devtools' library. The igr
 ```
 install.packages("devtools")
 library(devtools)
-devtools::install_github('Amy3100/receptor2tfDiffusion',force = T)
+devtools::install_github('Amy3100/receptor2tfDiffusion',force = F)
 ```
 
 For the analysis, following packages are required:
