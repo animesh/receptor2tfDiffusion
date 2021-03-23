@@ -1,0 +1,22 @@
+Package: receptor2tfDiffusion
+Type: Package
+Title: This package calculate single-sample network connectivity 
+Version: 1.0
+Date: 2021-03-17
+Author: Amrinder Singh
+Maintainer: Amrinder Singh <amrinder.singh@uit.no>
+Description: To calculate Network diffusion contains mainly two steps: creating Signalling Network (SigNet) and
+	     use SigNet output in calculate single-sample network connectivity. This function uses the diffusion equation to calculate single-sample network connectivity 
+	     based on signal strength between context-specific receptors and TFs.This is achieved using aggregate accumulation of signal per node as a function of time.
+Depends: R (>= 3.0.2)
+Imports: doParallel, igraph
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3
