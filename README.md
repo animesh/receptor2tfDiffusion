@@ -45,12 +45,12 @@ nodeW <- diffusionData$M[unique(c(network[,1],network[,2])),24]
 diffusion_curve <- signalOnNetwork(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRSF1B',n = 2000)
 ```
 
-The diffusion curve is a R 'list' object with two components 'Enode' is the signal increasing over time at the output node, and signal.
+The diffusion curve is a R 'list' object with two components: 'Enode' is the signal increasing over time at the output node, and signal. Follwing histogram shows the final signal intensity estimated by frequency of signal propogate between receptor to TF over 2000 iterations.   
 
 ```
 hist(diffusion_curve$signal, main ="Final signal intensity", xlab="Signal" )
 ```
-We visualize diffusion plot calculated for given receptor 'TNFRSF1B' and TF 'FLI1' with 2000 iterations :
+We visualize diffusion plot calculated for given receptor 'TNFRSF1B' and TF 'FLI1' with 2000 iterations:
 
 ```
 #par(mar=c(0,0,0,0))
