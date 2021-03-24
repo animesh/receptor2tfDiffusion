@@ -14,12 +14,11 @@ library(devtools)
 devtools::install_github('Amy3100/receptor2tfDiffusion',force = F)
 ```
 
-For the analysis, following packages are required:
+For the analysis, following libraries are required:
 
 ```
 library(igraph)
 library(limma)
-library(devtools)
 library(receptor2tfDiffusion)
 library(doParallel)
 ```
