@@ -113,7 +113,7 @@ t50 <- diffusionMap(receptors = R, TFs = TFs, M= diffusionData$M, network = netL
 
 ```
 
-The t50s can the be used for data analysis or machine learning. The matrix is samples by TF receptor pairs so you can use it directly in PCA (e.g. "prcomp") but it needs to be transposed before use in tool like "limma" which expects variables in the rows.
+The t50s can then be used for data analysis or machine learning. The matrix is samples by TF receptor pairs so you can use it directly in PCA (e.g. "prcomp") but it needs to be transposed before use in tool like "limma" which expects variables in the rows.
 
 ```{r message=T}
 
