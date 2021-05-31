@@ -21,6 +21,7 @@ library(igraph)
 library(limma)
 library(receptor2tfDiffusion)
 library(doParallel)
+library(data.table)
 ```
 The package comes with a pre-normalized dataset, a network model, a list of transcription factors (TFs) and receptors. This contains an object `M` with gene expression data for UC patients and controls and an object `sampleSheet` contains metadata about patients pre and post treatment along with their treatment outcomes.
 
