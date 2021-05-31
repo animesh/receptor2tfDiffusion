@@ -142,7 +142,7 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
     for (tf in colnames(sample_dtime[[1]])){
       count <- count +1
       colnames(X)[count] <- paste(receptor,tf,sep = '_')
-      for(ii in 1:54){
+      for(ii in ncol(M)){
         X[ii,count] <- sample_dtime[[ii]][receptor,tf]
       }
     }
