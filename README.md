@@ -44,7 +44,7 @@ The function 'signalOnNetwork' takes in a network, gene expression values for th
 ```
 nodeW <- diffusionData$M[unique(c(network[,1],network[,2])),24]
 network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
-diffusion_curve <- signalOnNetwork(network= network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRSF1B',n = 2000)
+diffusion_curve <- signalOnNetwork(network= network,outputNode = 'FLI1',inputNode = 'TNFRSF1B',n = 2000)
 ```
 
 The diffusion curve is a R 'list' object with two components: 'Enode' is the signal increasing over time at the output node, and signal. Following histogram shows the final signal intensity estimated for the given TF 'FLI1' over 2000 iterations. We observe that the signal intensity increases along with the gradual spread of the signal in the network globally.    
