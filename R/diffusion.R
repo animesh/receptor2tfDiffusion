@@ -3,23 +3,16 @@
 #' To calculate Network diffusion, there are mainly two steps: creating Signalling Network (SigNet) and
 #' use SigNet output in calculate single-sample network connectivity using diffusion model.
 #'
-#' Signalling Network
-#'
-#' Signalling network quantify network connectivity by calculating signal strength between receptors and TFs.
 #'
 #' @param network a dataframe of two columns "from" and "to" with strings representing gene IDs
 #' @param nodeW weight on the network node
-#' @param outputNode output node
-#' @param inputNode input node containing receptors in the signalling network
-#' @param inputSignal minimum amount of signal placed as input for signal propagation
-#' @param n number of iteration
-#' @keywords Network Signalling
 #' @return
 #' @examples
-#' #data(diffusionData)
-#' #signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
+#' #network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
 #' #{ ... }
 #' @export
+#'
+#'
 
 initializeSignallingNetwork <- function(network,nodeW){
 
@@ -43,27 +36,45 @@ initializeSignallingNetwork <- function(network,nodeW){
   return(list(network= network,signal = signal))
 }
 
-signalOnNetwork <- function(network,outputNode,inputNode,inputSignal = 0.99, n = 2000){
 
-    signal <- network$signal
-    network <- network$network
-    signal[inputNode] <- inputSignal
-    setkey(network,'from')
-    Enode <- matrix(0,nrow = n,ncol = length(outputNode))
-    colnames(Enode) <- outputNode
+#' Quantify network connectivity by calculating signal strength between receptors and TFs.
+#'
+#' @param network output from initilizeNetwork list with 'network' and 'signal' components
+#' @param nodeW weight on the network node
+#' @param outputNode output node
+#' @param inputNode input node containing receptors in the signalling network
+#' @param inputSignal minimum amount of signal placed as input for signal propagation
+#' @param n number of iteration
+#' @keywords Network Signalling
+#' @return
+#' @examples
+#' #data(diffusionData)
+#' #network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
+#' #signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
+#' #{ ... }
+#' @export
+#'
+#'
+signalOnNetwork <-function(network,outputNode,inputNode,inputSignal = 0.99, n = 2000){
 
-    for(ii in 1:n){
-      network$delta <- signal[network$from]-signal[network$to]
-      network$flux <- network$delta*network$edgeW
-      f1 <- network[,.(flux = sum(flux)),by = from]
-      r1 <- network[,.(flux = sum(flux)),by = to]
-      signal[f1$from] <- signal[f1$from] - f1$flux
-      signal[r1$to] <- signal[r1$to]+r1$flux
-      Enode[ii,outputNode] <- signal[outputNode]
-    }
-    return(list(Enode=t(Enode),signal = signal))
+  signal <- network$signal
+  network <- network$network
+  signal[inputNode] <- inputSignal
+  setkey(network,'from')
+  Enode <- matrix(0,nrow = n,ncol = length(outputNode))
+  colnames(Enode) <- outputNode
+
+  for(ii in 1:n){
+    network$delta <- signal[network$from]-signal[network$to]
+    network$flux <- network$delta*network$edgeW
+    f1 <- network[,.(flux = sum(flux)),by = from]
+    r1 <- network[,.(flux = sum(flux)),by = to]
+    signal[f1$from] <- signal[f1$from] - f1$flux
+    signal[r1$to] <- signal[r1$to]+r1$flux
+    Enode[ii,outputNode] <- signal[outputNode]
+  }
+  return(list(Enode=t(Enode),signal = signal))
 }
-
 
 #' Diffusion model
 #'
@@ -84,16 +95,16 @@ signalOnNetwork <- function(network,outputNode,inputNode,inputSignal = 0.99, n =
 #' #{ ... }
 #' @export
 
-diffusionMap <-function(receptors, TFs, M, network, nCores=2, nTicks=2000){
+diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
   setDTthreads(1)
   if(!all(receptors %in% rownames(M))) {
-     stop ("Please include receptors in the gene expression data (M) ")
+    stop ("Please include receptors in the gene expression data (M) ")
   }
   if(!all(TFs %in% rownames(M))){
-     stop("Please include TFs in the gene expression data (M) ")
+    stop("Please include TFs in the gene expression data (M) ")
   }
   if(!all(c(network[,1], network[,2]) %in% rownames(M))) {
-     stop("Please include all network nodes in the gene expression data (M) ")
+    stop("Please include all network nodes in the gene expression data (M) ")
   }
 
 
@@ -101,12 +112,12 @@ diffusionMap <-function(receptors, TFs, M, network, nCores=2, nTicks=2000){
   registerDoParallel(cores=nCores)
 
   testf <- function(receptor){
-   # print(fastSignalOnNetwork)
-     aa <-   fastSignalOnNetwork(startingNet,outputNode = TFs,
-                             inputNode = receptor, inputSignal = 0.99,n = nTicks)
+    # print(fastSignalOnNetwork)
+    aa <-   fastSignalOnNetwork(startingNet,outputNode = TFs,
+                                inputNode = receptor, inputSignal = 0.99,n = nTicks)
     diff_time <- apply(aa[[1]],1,function(x){
       min(which(x > 0.5 * max(x)))
-      })
+    })
   }
 
   sample_dtime <- vector('list',ncol(M))
@@ -138,6 +149,7 @@ diffusionMap <-function(receptors, TFs, M, network, nCores=2, nTicks=2000){
 
   return(X)
 }
+
 
 
 #' Network Graph
