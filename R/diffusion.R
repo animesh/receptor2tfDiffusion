@@ -3,22 +3,12 @@
 #' To calculate Network diffusion, there are mainly two steps: creating Signalling Network (SigNet) and
 #' use SigNet output in calculate single-sample network connectivity using diffusion model.
 #'
-#' Signalling Network
-#'
-#' Signalling network quantify network connectivity by calculating signal strength between receptors and TFs.
 #'
 #' @param network a dataframe of two columns "from" and "to" with strings representing gene IDs
 #' @param nodeW weight on the network node
-#' @param outputNode output node
-#' @param inputNode input node containing receptors in the signalling network
-#' @param inputSignal minimum amount of signal placed as input for signal propagation
-#' @param n number of iteration
-#' @keywords Network Signalling
 #' @return
 #' @examples
-#' #data(diffusionData)
 #' #network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
-#' #signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
 #' #{ ... }
 #' @export
 
@@ -45,6 +35,24 @@ initializeSignallingNetwork <- function(network,nodeW){
 }
 
 
+#' Quantify network connectivity by calculating signal strength between receptors and TFs.
+#'
+#' @param network output from initilizeNetwork list with 'network' and 'signal' components
+#' @param nodeW weight on the network node
+#' @param outputNode output node
+#' @param inputNode input node containing receptors in the signalling network
+#' @param inputSignal minimum amount of signal placed as input for signal propagation
+#' @param n number of iteration
+#' @keywords Network Signalling
+#' @return
+#' @examples
+#' #data(diffusionData)
+#' #network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
+#' #signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
+#' #{ ... }
+#' @export
+#'
+#'
 signalOnNetwork <-function(network,outputNode,inputNode,inputSignal = 0.99, n = 2000){
 
   signal <- network$signal
