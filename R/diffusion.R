@@ -21,65 +21,49 @@
 #' #{ ... }
 #' @export
 
+initializeSignallingNetwork <- function(network,nodeW){
 
-signalOnNetwork <- function(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000){
-
-  ##Test that output and input exist in the network
-  if(!(all(outputNode %in% network[,1] | outputNode %in% network[,2]))){
-    print('output node not in network')
+  if(!all(c(network$from,network$to) %in% names(nodeW))){
+    stop('network genes missing in expression (nodeW)')
   }
-  if(!(inputNode %in% network[,1] | inputNode %in% network[,2])){
-    print('input node not in network')
-  }
-
-  connectivityMatrix <- matrix(0,nrow = length(nodeW),ncol = length(nodeW))
-
-  rownames(connectivityMatrix) <- names(nodeW)
-
-  colnames(connectivityMatrix) <- names(nodeW)
-
-  deltaMatrix <- connectivityMatrix
 
   for(ii in 1:nrow(network)){
-
     network$edgeW[ii] <- nodeW[network$from[ii]]*nodeW[network$to[ii]]
-
   }
 
+  ##Consider this one
   network$edgeW <- network$edgeW/(500*(max(network$edgeW)))
+  network$flux <- 0
+
 
   signal <- rep(0,length(nodeW))
-
   names(signal) <- names(nodeW)
-
-  Enode <- rep(0,n)
-  if(length(outputNode) > 1){
-    Enode <- matrix(0,length(outputNode),n)
-    rownames(Enode) <- outputNode
-  }
-
-  signal[inputNode] <- signal[inputNode] + inputSignal
-
-  for(ii in 1:n){
-    #signal[inputNode] <- signal[inputNode] + inputSignal
-    delta <- signal[network$from] - signal[network$to]
-    network$edgeFlux <- delta*network$edgeW
-
-    for(jj in names(signal)){
-      signal[jj] <- signal[jj] - sum(network$edgeFlux[which(network$from == jj)])
-      signal[jj] <- signal[jj] + sum(network$edgeFlux[which(network$to == jj)])
-    }
-
-    if(length(outputNode) == 1){
-      Enode[ii] <- signal[outputNode]
-    }
-    if(length(outputNode) > 1){
-      Enode[,ii] <- signal[outputNode]
-    }
-  }
-
-  return(list(Enode = Enode,signal = signal))
+  nodes <- data.frame(nodeW= nodeW,signal = signal)
+  network <- data.table(network)
+  return(list(network= network,signal = signal))
 }
+
+signalOnNetwork <- function(network,outputNode,inputNode,inputSignal = 0.99, n = 2000){
+
+    signal <- network$signal
+    network <- network$network
+    signal[inputNode] <- inputSignal
+    setkey(network,'from')
+    Enode <- matrix(0,nrow = n,ncol = length(outputNode))
+    colnames(Enode) <- outputNode
+
+    for(ii in 1:n){
+      network$delta <- signal[network$from]-signal[network$to]
+      network$flux <- network$delta*network$edgeW
+      f1 <- network[,.(flux = sum(flux)),by = from]
+      r1 <- network[,.(flux = sum(flux)),by = to]
+      signal[f1$from] <- signal[f1$from] - f1$flux
+      signal[r1$to] <- signal[r1$to]+r1$flux
+      Enode[ii,outputNode] <- signal[outputNode]
+    }
+    return(list(Enode=t(Enode),signal = signal))
+}
+
 
 #' Diffusion model
 #'
@@ -100,7 +84,8 @@ signalOnNetwork <- function(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRS
 #' #{ ... }
 #' @export
 
-diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
+diffusionMap <-function(receptors, TFs, M, network, nCores=2, nTicks=2000){
+  setDTthreads(1)
   if(!all(receptors %in% rownames(M))) {
      stop ("Please include receptors in the gene expression data (M) ")
   }
@@ -111,11 +96,13 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
      stop("Please include all network nodes in the gene expression data (M) ")
   }
 
+
   library(doParallel)
   registerDoParallel(cores=nCores)
 
   testf <- function(receptor){
-     aa <-   signalOnNetwork(network,nodeW = nodeW,outputNode = TFs,
+   # print(fastSignalOnNetwork)
+     aa <-   fastSignalOnNetwork(startingNet,outputNode = TFs,
                              inputNode = receptor, inputSignal = 0.99,n = nTicks)
     diff_time <- apply(aa[[1]],1,function(x){
       min(which(x > 0.5 * max(x)))
@@ -127,7 +114,8 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
 
   for(jj in colnames(M)){
     nodeW <- M[unique(c(network[,1],network[,2])),jj]
-    diff_time <- foreach(receptor = receptors, .combine = rbind) %dopar% testf(receptor)
+    startingNet <- initializeSignallingNetwork(network,nodeW)
+    diff_time <- foreach(receptor = receptors, .export=c('fastSignalOnNetwork','setkey'),.combine = rbind) %dopar% testf(receptor)
     rownames(diff_time) <- receptors
     diff_time[diff_time > nTicks] <- nTicks + 1
     sample_dtime[[jj]] <- diff_time
@@ -142,7 +130,7 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
     for (tf in colnames(sample_dtime[[1]])){
       count <- count +1
       colnames(X)[count] <- paste(receptor,tf,sep = '_')
-      for(ii in ncol(M)){
+      for(ii in 1:ncol(M)){
         X[ii,count] <- sample_dtime[[ii]][receptor,tf]
       }
     }
