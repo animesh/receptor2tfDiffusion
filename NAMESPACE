@@ -2,4 +2,5 @@
 
 export(diffusionMap)
 export(getSubnetwork)
+export(initializeSignallingNetwork)
 export(signalOnNetwork)
