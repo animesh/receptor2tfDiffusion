@@ -37,12 +37,14 @@ The 'diffusionData' object consists of a network, a 'dataframe' with a 'from' an
 ```
 network <- diffusionData$network 
 ```
+The 'initializeSignallingNetwork' initialize the network based on network's edge weights provided in the gene expression of given sample. It generates list of nodes present in the network with initialized values. 
 
 The function 'signalOnNetwork' takes in a network, gene expression values for the genes making up the network, names of the input (receptor), and output (TF) nodes. Other kinds of genes or a proteins can be used but conceptually going from receptors to TFs makes the most sense. Let us look at how signal travels from the receptor TNFRSF1B to the inflammation controlling TF FLI1. To do this, we run the function 'diffusion_curve'. Node weights are given from gene expression data. In this case, we choose a sample at random e.g. sample No. 24.  
 
 ```
 nodeW <- diffusionData$M[unique(c(network[,1],network[,2])),24]
-diffusion_curve <- signalOnNetwork(network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRSF1B',n = 2000)
+network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
+diffusion_curve <- signalOnNetwork(network= network,nodeW,outputNode = 'FLI1',inputNode = 'TNFRSF1B',n = 2000)
 ```
 
 The diffusion curve is a R 'list' object with two components: 'Enode' is the signal increasing over time at the output node, and signal. Following histogram shows the final signal intensity estimated for the given TF 'FLI1' over 2000 iterations. We observe that the signal intensity increases along with the gradual spread of the signal in the network globally.    
