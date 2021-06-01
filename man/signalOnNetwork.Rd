@@ -2,21 +2,12 @@
 % Please edit documentation in R/diffusion.R
 \name{signalOnNetwork}
 \alias{signalOnNetwork}
-\title{receptor2tfDiffusion}
+\title{Quantify network connectivity by calculating signal strength between receptors and TFs.}
 \usage{
-signalOnNetwork(
-  network,
-  nodeW,
-  outputNode = "FLI1",
-  inputNode = "TNFRSF1B",
-  inputSignal = 0.99,
-  n = 2000
-)
+signalOnNetwork(network, outputNode, inputNode, inputSignal = 0.99, n = 2000)
 }
 \arguments{
-\item{network}{a dataframe of two columns "from" and "to" with strings representing gene IDs}
-
-\item{nodeW}{weight on the network node}
+\item{network}{output from initilizeNetwork list with 'network' and 'signal' components}
 
 \item{outputNode}{output node}
 
@@ -25,21 +16,18 @@ signalOnNetwork(
 \item{inputSignal}{minimum amount of signal placed as input for signal propagation}
 
 \item{n}{number of iteration}
+
+\item{nodeW}{weight on the network node}
 }
 \value{
 
 }
 \description{
-To calculate Network diffusion, there are mainly two steps: creating Signalling Network (SigNet) and
-use SigNet output in calculate single-sample network connectivity using diffusion model.
-}
-\details{
-Signalling Network
-
-Signalling network quantify network connectivity by calculating signal strength between receptors and TFs.
+Quantify network connectivity by calculating signal strength between receptors and TFs.
 }
 \examples{
 #data(diffusionData)
+#network <- initializeSignallingNetwork(network = network, nodeW = nodeW)
 #signalNet<- signalOnNetwork(diffusionData$network, nodeW=M[,1], outputNode = 'FLI1',inputNode = 'TNFRSF1B', inputSignal = 0.99,n = 2000)
 #{ ... }
 }
