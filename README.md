@@ -50,7 +50,7 @@ diffusion_curve <- signalOnNetwork(network= network,outputNode = 'FLI1',inputNod
 The diffusion curve is a R 'list' object with two components: 'Enode' is the signal increasing over time at the output node, and signal. Following histogram shows the final signal intensity estimated for the given TF 'FLI1' over 2000 iterations. We observe that the signal intensity increases along with the gradual spread of the signal in the network globally.    
 
 ```
-hist(diffusion_curve$signal, main ="Final signal intensity", xlab="Signal" )
+hist(diffusion_curve$signal[1,], main ="Final signal intensity", xlab="Signal" )
 ```
 
 To extrapolate the diffusion of signal accumulated at TF 'FLI1' as a function of time (time ticks), we visualize the signal diffusion for a given receptor 'TNFRSF1B' and TF 'FLI1' with 2000 iterations. We observe that the signal intensity reaches maximum at 'FLI1' once the signal is a gradual spread of the signal.  
