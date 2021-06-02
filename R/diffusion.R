@@ -112,8 +112,8 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
   registerDoParallel(cores=nCores)
 
   testf <- function(receptor){
-    # print(fastSignalOnNetwork)
-    aa <-   fastSignalOnNetwork(startingNet,outputNode = TFs,
+    # print(SignalOnNetwork)
+    aa <-   SignalOnNetwork(startingNet,outputNode = TFs,
                                 inputNode = receptor, inputSignal = 0.99,n = nTicks)
     diff_time <- apply(aa[[1]],1,function(x){
       min(which(x > 0.5 * max(x)))
@@ -126,7 +126,7 @@ diffusionMap <- function(receptors, TFs, M, network, nCores=2, nTicks=2000){
   for(jj in colnames(M)){
     nodeW <- M[unique(c(network[,1],network[,2])),jj]
     startingNet <- initializeSignallingNetwork(network,nodeW)
-    diff_time <- foreach(receptor = receptors, .export=c('fastSignalOnNetwork','setkey'),.combine = rbind) %dopar% testf(receptor)
+    diff_time <- foreach(receptor = receptors, .export=c('SignalOnNetwork','setkey'),.combine = rbind) %dopar% testf(receptor)
     rownames(diff_time) <- receptors
     diff_time[diff_time > nTicks] <- nTicks + 1
     sample_dtime[[jj]] <- diff_time
