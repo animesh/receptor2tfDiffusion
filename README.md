@@ -68,6 +68,7 @@ The diffusion calculation is time consuming. For mapping large sets of receptors
 ```
 R <- c('TNFRSF11B','OSMR','IL6R')
 TFs <- c('NFKB1','HNF4A','MAF','IRF7')
+network <- diffusionData$network 
 netLight <- getSubnetwork(network,receptors = R, TFs = TFs)
 ```
 The "netLight" dataframe now contains a smaller network relevant for the three receptors in R and the four TFs in 'TFs'
